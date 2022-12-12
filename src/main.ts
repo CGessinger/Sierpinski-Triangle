@@ -1,6 +1,8 @@
 import './style.css';
 import * as THREE from "three";
 import { OrbitControls } from "../node_modules/three/examples/jsm/controls/OrbitControls"
+// @ts-ignore
+import Stats from 'three/addons/libs/stats.module.js';
 import GUI from "lil-gui";
 import vertexShader from "./shaders/vertex.glsl?raw";
 import fragmentShader from "./shaders/fragment.glsl?raw";
@@ -15,6 +17,12 @@ const shape = {
 }
 
 const canvas = document.getElementById("canvas") as HTMLElement;
+
+const stats = new Stats();
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.top = '0px';
+document.body.appendChild(stats.domElement);
+
 const gui = new GUI();
 const debugObject = {
     speed: 1,
@@ -86,14 +94,18 @@ let lastX = Math.random();
 let lastY = Math.random();
 let lastZ = 1;
 
+let n = (corner: number, last: number): number => {
+    return (corner + last) / 2;
+}
+
 function addPoints() {
     const cornerCount = corners.length / 3;
     const randCorner = Math.round(Math.random() * (cornerCount - 1)) * 3;
-    const nx = (corners[randCorner] + lastX) / 2;
+    const nx = n(corners[randCorner], lastX);
     lastX = nx;
-    const ny = (corners[randCorner + 1] + lastY) / 2;
+    const ny = n(corners[randCorner + 1], lastY);
     lastY = ny;
-    const nz = (corners[randCorner + 2] + lastZ) / 2;
+    const nz = n(corners[randCorner + 2], lastZ);
     lastZ = nz;
 
     const i3 = drawCount * 3;
@@ -150,6 +162,10 @@ function initCornersTriangle() {
     corners[6 + 1] = 0;
     corners[6 + 2] = 1;
 
+    lastX = Math.random();
+    lastY = Math.random();
+    lastZ = 1;
+
     if (debugObject.apply3d) {
         corners[9] = 0.5;
         corners[9 + 1] = 0;
@@ -175,6 +191,10 @@ function initCornersSquare() {
     corners[9 + 1] = 0;
     corners[9 + 2] = 1;
 
+    lastX = Math.random();
+    lastY = Math.random();
+    lastZ = 1;
+
     if (debugObject.apply3d) {
         corners[12] = 0;
         corners[12 + 1] = 0;
@@ -191,6 +211,7 @@ function initCornersSquare() {
         corners[21] = 1;
         corners[21 + 1] = 0;
         corners[21 + 2] = 0;
+        lastZ = Math.random();
     }
 }
 
@@ -319,6 +340,7 @@ function tick() {
     }
 
     render();
+    stats.update();
     window.requestAnimationFrame(tick);
 }
 
