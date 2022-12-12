@@ -1,3 +1,3 @@
 # Sierpinski-Triangle
 
-Preview at: https://sierpinski-triangle-seven.vercel.app/
+Preview at: https://sierpinski-triangle-threejs.vercel.app/
